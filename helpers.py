@@ -1,6 +1,6 @@
 import uuid
- 
- 
+
+
 def generate_user_data():
     unique_id = uuid.uuid4().hex[:8]
     return {
@@ -10,4 +10,3 @@ def generate_user_data():
         "email": f"testuser_{unique_id}@yandex.ru",
         "password": "TestPass123!",
     }
- 

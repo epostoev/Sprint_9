@@ -9,11 +9,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     command: ["-conf", "/etc/selenoid/browsers.json", "-limit", "4"]
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4444/status"]
+      test: ["CMD-SHELL", "curl -f http://localhost:4444/status || exit 1"]
       interval: 5s
       timeout: 5s
-      retries: 10
-      start_period: 10s
+      retries: 12
+      start_period: 15s
 
   selenoid-ui:
     image: aerokube/selenoid-ui:latest

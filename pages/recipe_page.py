@@ -1,5 +1,6 @@
 import allure
-from pathlib import Path
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from data import URLS, APP_DIR
 from pages.base_page import BasePage
@@ -22,8 +23,14 @@ class RecipePage(BasePage):
     @allure.step("Добавляем ингредиент: {ingredient_name}, количество: {amount}")
     def add_ingredient(self, ingredient_name, amount):
         self.enter_text(RecipePageLocators.INGREDIENT_INPUT, ingredient_name)
-        # Ждём появления дропдауна и кликаем первый вариант
-        self.click(RecipePageLocators.INGREDIENT_DROPDOWN_ITEM)
+        # Ждём появления дропдауна и кликаем первый элемент
+        # Заново ищем элемент после ввода — дропдаун перерендеривается
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located(RecipePageLocators.INGREDIENT_DROPDOWN_ITEM)
+        )
+        WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(RecipePageLocators.INGREDIENT_DROPDOWN_ITEM)
+        ).click()
         self.enter_text(RecipePageLocators.INGREDIENT_AMOUNT_INPUT, amount)
         self.click(RecipePageLocators.ADD_INGREDIENT_BUTTON)
 
@@ -51,8 +58,6 @@ class RecipePage(BasePage):
         return element.text
 
     def wait_for_element_visible(self, locator, timeout=15):
-        from selenium.webdriver.support.wait import WebDriverWait
-        from selenium.webdriver.support import expected_conditions as EC
         return WebDriverWait(self.driver, timeout).until(
             EC.visibility_of_element_located(locator)
         )

@@ -1,10 +1,37 @@
+import os
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-
+from selenium.webdriver.remote.webdriver import WebDriver
+ 
 from helpers import generate_user_data
 from data import URLS
 from pages.signup_page import SignupPage
+from pages.signin_page import SigninPage
+
+
+def get_driver():
+    """Возвращает локальный Chrome или Remote (Selenoid) в зависимости от окружения."""
+    selenoid_url = os.getenv("SELENOID_URL")
+    options = Options()
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+ 
+    if selenoid_url:
+        # Запуск в Selenoid (Docker)
+        options.set_capability("browserName", "chrome")
+        options.set_capability("browserVersion", "128.0")
+        options.set_capability("selenoid:options", {
+            "enableVNC": True,
+            "enableVideo": False
+        })
+        return webdriver.Remote(
+            command_executor=selenoid_url,
+            options=options
+        )
+    else:
+        # Локальный запуск
+        return webdriver.Chrome(options=options)
 
 
 @pytest.fixture
@@ -40,3 +67,14 @@ def registered_user(driver):
     signup_page.click_submit()
     signup_page.wait_for_url_contains(URLS.SIGNIN_URL)
     return user
+
+@pytest.fixture
+def logged_in_driver(driver, registered_user):
+    """Драйвер с уже залогиненным пользователем."""
+    signin_page = SigninPage(driver)
+    # Сайт принимает username в поле email
+    signin_page.login(
+        email=registered_user["username"],
+        password=registered_user["password"],
+    )
+    return driver

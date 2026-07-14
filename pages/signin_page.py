@@ -29,3 +29,10 @@ class SigninPage(BasePage):
     @allure.step("Кликаем на 'Войти' в хедере")
     def click_signin_link(self):
         self.click(SigninPageLocators.LINK_SIGNIN)
+        
+    @allure.step("Выполняем вход")
+    def login(self, email, password):
+        self.open()
+        self.fill_signin_form(email, password)
+        self.click_submit()
+        self.wait_for_url_contains(URLS.RECIPES_URL)

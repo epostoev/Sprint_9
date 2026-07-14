@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   selenoid:
     image: aerokube/selenoid:latest
@@ -10,6 +8,12 @@ services:
       - ./browser.json:/etc/selenoid/browsers.json
       - /var/run/docker.sock:/var/run/docker.sock
     command: ["-conf", "/etc/selenoid/browsers.json", "-limit", "4"]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:4444/status"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   selenoid-ui:
     image: aerokube/selenoid-ui:latest
@@ -17,14 +21,16 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - selenoid
+      selenoid:
+        condition: service_healthy
     command: ["--selenoid-uri", "http://selenoid:4444"]
 
   tests:
     build: .
     container_name: tests
     depends_on:
-      - selenoid
+      selenoid:
+        condition: service_healthy
     environment:
       - SELENOID_URL=http://selenoid:4444/wd/hub
     volumes:

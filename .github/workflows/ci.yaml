@@ -14,8 +14,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Pull Selenoid Chrome image
-        run: docker pull selenoid/chrome:128.0
+      - name: Pull Chrome image
+        run: docker pull selenium/standalone-chrome:128.0
 
       - name: Run tests with Docker Compose
         run: docker compose up --build --abort-on-container-exit tests

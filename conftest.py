@@ -10,24 +10,22 @@ from pages.signin_page import SigninPage
 
 
 def get_driver():
-    """Возвращает локальный Chrome или Remote (Selenoid) в зависимости от окружения."""
-    selenoid_url = os.getenv("SELENOID_URL")
+    """Возвращает локальный Chrome или Remote (Selenoid/standalone) в зависимости от окружения."""
+    remote_url = os.getenv("SELENOID_URL")
     options = Options()
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--headless=new")
 
-    if selenoid_url:
-        options.set_capability("browserName", "chrome")
-        options.set_capability("browserVersion", "128.0")
-        options.set_capability("selenoid:options", {
-            "enableVNC": True,
-            "enableVideo": False
-        })
+    if remote_url:
+        # Запуск в Docker через selenium/standalone-chrome или Selenoid
         return webdriver.Remote(
-            command_executor=selenoid_url,
+            command_executor=remote_url,
             options=options
         )
     else:
+        # Локальный запуск — убираем headless для наглядности
+        options.arguments.remove("--headless=new")
         return webdriver.Chrome(options=options)
 
 

@@ -1,38 +1,25 @@
 services:
-  selenoid:
-    image: aerokube/selenoid:latest
-    container_name: selenoid
+  chrome:
+    image: selenium/standalone-chrome:128.0
+    container_name: chrome
+    shm_size: 2gb
     ports:
       - "4444:4444"
-    volumes:
-      - ./browser.json:/etc/selenoid/browsers.json
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: ["-conf", "/etc/selenoid/browsers.json", "-limit", "4"]
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:4444/status || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:4444/wd/hub/status || exit 1"]
       interval: 5s
       timeout: 5s
       retries: 12
       start_period: 15s
 
-  selenoid-ui:
-    image: aerokube/selenoid-ui:latest
-    container_name: selenoid-ui
-    ports:
-      - "8080:8080"
-    depends_on:
-      selenoid:
-        condition: service_healthy
-    command: ["--selenoid-uri", "http://selenoid:4444"]
-
   tests:
     build: .
     container_name: tests
     depends_on:
-      selenoid:
+      chrome:
         condition: service_healthy
     environment:
-      - SELENOID_URL=http://selenoid:4444/wd/hub
+      - SELENOID_URL=http://chrome:4444/wd/hub
     volumes:
       - ./allure-results:/app/allure-results
     command: ["pytest", "-v", "--alluredir=allure-results"]

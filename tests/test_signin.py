@@ -27,7 +27,6 @@ class TestSignin:
         signin_page = SigninPage(driver)
         signin_page.click_signin_link()
         signin_page.wait_for_url_contains(URLS.SIGNIN_URL)
-        # Сайт принимает username в поле email
         signin_page.fill_signin_form(
             email=registered_user["username"],
             password=registered_user["password"],

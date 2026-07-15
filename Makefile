@@ -13,8 +13,7 @@ fix:
 	python3 -m autopep8 --in-place --aggressive --aggressive $(FILE_1)
 
 test:
-# 	pytest -v -s --alluredir=allure-results
-	pytest -v -s
+	pytest -v -s --alluredir=allure-results
 
 report:
 	allure serve allure-results

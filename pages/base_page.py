@@ -19,6 +19,11 @@ class BasePage:
             EC.url_contains(url_part)
         )
 
+    def wait_for_element_visible(self, locator, timeout=15):
+        return WebDriverWait(self.driver, timeout).until(
+            EC.visibility_of_element_located(locator)
+        )
+
     @allure.step("Вводим текст в поле")
     def enter_text(self, locator, text):
         element = self.wait.until(EC.visibility_of_element_located(locator))
@@ -29,6 +34,11 @@ class BasePage:
     def click(self, locator):
         element = self.wait.until(EC.element_to_be_clickable(locator))
         element.click()
+
+    def send_keys_to_element(self, locator, text):
+        """Находит элемент и отправляет текст (используется для загрузки файлов)."""
+        element = self.driver.find_element(*locator)
+        element.send_keys(text)
 
     def is_element_visible(self, locator, timeout=10):
         try:

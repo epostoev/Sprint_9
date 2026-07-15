@@ -20,17 +20,14 @@ class RecipePage(BasePage):
     def enter_recipe_name(self, name):
         self.enter_text(RecipePageLocators.RECIPE_NAME_INPUT, name)
 
-    @allure.step("Добавляем ингредиент: {ingredient_name}, количество: {amount}")
+    @allure.step(
+        "Добавляем ингредиент: {ingredient_name}, количество: {amount}")
     def add_ingredient(self, ingredient_name, amount):
         self.enter_text(RecipePageLocators.INGREDIENT_INPUT, ingredient_name)
-        # Ждём появления дропдауна и кликаем первый элемент
-        # Заново ищем элемент после ввода — дропдаун перерендеривается
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located(RecipePageLocators.INGREDIENT_DROPDOWN_ITEM)
-        )
-        WebDriverWait(self.driver, 10).until(
-            EC.element_to_be_clickable(RecipePageLocators.INGREDIENT_DROPDOWN_ITEM)
-        ).click()
+        WebDriverWait(
+            self.driver, 10).until(
+            EC.element_to_be_clickable(
+                RecipePageLocators.INGREDIENT_DROPDOWN_ITEM)).click()
         self.enter_text(RecipePageLocators.INGREDIENT_AMOUNT_INPUT, amount)
         self.click(RecipePageLocators.ADD_INGREDIENT_BUTTON)
 
@@ -45,19 +42,18 @@ class RecipePage(BasePage):
     @allure.step("Загружаем фото рецепта")
     def upload_photo(self, filename="test_image.png"):
         photo_path = str(APP_DIR / "assets" / filename)
-        element = self.driver.find_element(*RecipePageLocators.PHOTO_INPUT)
-        element.send_keys(photo_path)
+        self.send_keys_to_element(RecipePageLocators.PHOTO_INPUT, photo_path)
 
     @allure.step("Нажимаем кнопку 'Создать рецепт'")
     def click_submit(self):
         self.click(RecipePageLocators.SUBMIT_BUTTON)
 
+    @allure.step("Проверяем что карточка рецепта отображается")
+    def is_recipe_card_visible(self):
+        return self.is_element_visible(RecipePageLocators.RECIPE_CARD_TITLE)
+
     @allure.step("Получаем заголовок созданного рецепта")
     def get_recipe_title(self):
-        element = self.wait_for_element_visible(RecipePageLocators.RECIPE_CARD_TITLE)
+        element = self.wait_for_element_visible(
+            RecipePageLocators.RECIPE_CARD_TITLE)
         return element.text
-
-    def wait_for_element_visible(self, locator, timeout=15):
-        return WebDriverWait(self.driver, timeout).until(
-            EC.visibility_of_element_located(locator)
-        )

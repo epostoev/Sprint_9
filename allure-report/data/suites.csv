@@ -1,0 +1,7 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","1739","После авторизации отображается кнопка 'Выход'","tests","2026-07-16","passed","2026-07-16","TestSignin","test_signin","",""
+"","1448","Созданный рецепт отображается на странице с карточкой","tests","2026-07-16","passed","2026-07-16","TestCreateRecipe","test_recipe","",""
+"","1891","После регистрации отображается форма авторизации","tests","2026-07-16","passed","2026-07-16","TestSignup","test_signup","",""
+"","715","Успешная авторизация переводит на главную страницу","tests","2026-07-16","passed","2026-07-16","TestSignin","test_signin","",""
+"","1479","Название созданного рецепта совпадает с введённым","tests","2026-07-16","passed","2026-07-16","TestCreateRecipe","test_recipe","",""
+"","1550","Успешное создание аккаунта переводит на страницу авторизации","tests","2026-07-16","passed","2026-07-16","TestSignup","test_signup","",""
